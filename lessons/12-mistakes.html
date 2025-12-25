@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 12: The Mistakes Everyone Makes — Learn AI</title>
+    <meta name="description" content="7 common prompting mistakes and how to avoid them. The quick reference to level up your AI skills.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-card: #1c1c21;
+            --accent-primary: #a855f7;
+            --accent-secondary: #c084fc;
+            --accent-glow: rgba(168, 85, 247, 0.15);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-color: #27272a;
+            --success: #22c55e;
+            --success-glow: rgba(34, 197, 94, 0.15);
+            --error: #ef4444;
+            --error-glow: rgba(239, 68, 68, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.7; min-height: 100vh; }
+        .container { max-width: 680px; margin: 0 auto; padding: 0 1.5rem; }
+
+        header { padding: 1.5rem 0; border-bottom: 1px solid var(--border-color); }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; }
+        .back-link { display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+        .back-link:hover { color: var(--accent-primary); }
+        .progress { font-size: 0.85rem; color: var(--text-muted); }
+        .progress span { color: var(--accent-primary); font-weight: 600; }
+
+        .lesson { padding: 3rem 0; }
+        .lesson-badge { display: inline-block; padding: 0.3rem 0.75rem; background: var(--accent-glow); border-radius: 100px; font-size: 0.75rem; font-weight: 600; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
+        .lesson h1 { font-size: 2.25rem; font-weight: 800; line-height: 1.2; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .lesson-meta { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+        .hook { font-size: 1.2rem; color: var(--text-secondary); padding: 1.5rem; background: var(--bg-card); border-left: 3px solid var(--accent-primary); border-radius: 0 12px 12px 0; margin-bottom: 2rem; }
+        h2 { font-size: 1.35rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+        p { margin-bottom: 1rem; color: var(--text-secondary); }
+        strong { color: var(--text-primary); font-weight: 600; }
+
+        /* Mistake cards */
+        .mistake-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .mistake-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .mistake-num {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--error);
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .mistake-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .mistake-bad {
+            background: var(--error-glow);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .mistake-good {
+            background: var(--success-glow);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .mistake-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .mistake-bad .mistake-label { color: var(--error); }
+        .mistake-good .mistake-label { color: var(--success); }
+
+        /* Final section */
+        .completion {
+            background: linear-gradient(135deg, var(--accent-glow), rgba(59, 130, 246, 0.15));
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin: 2.5rem 0;
+            text-align: center;
+        }
+
+        .completion-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .completion-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .completion-text {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .completion-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--accent-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .completion-cta:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+
+        .summary { padding: 1.5rem; background: var(--bg-card); border-radius: 12px; margin: 2rem 0; text-align: center; }
+        .summary-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .summary-text { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); }
+
+        .lesson-nav { display: flex; justify-content: space-between; padding: 2rem 0; border-top: 1px solid var(--border-color); margin-top: 2rem; }
+        .nav-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-primary); text-decoration: none; font-weight: 500; transition: all 0.2s; }
+        .nav-btn:hover { border-color: var(--accent-primary); background: var(--accent-glow); }
+        .nav-btn.next { background: var(--accent-primary); border-color: var(--accent-primary); }
+        .nav-btn.next:hover { background: var(--accent-secondary); border-color: var(--accent-secondary); }
+        .nav-btn.disabled { opacity: 0.5; pointer-events: none; }
+
+        footer { padding: 2rem 0; border-top: 1px solid var(--border-color); text-align: center; }
+        .footer-links { display: flex; justify-content: center; gap: 2rem; font-size: 0.85rem; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; }
+        .footer-links a:hover { color: var(--accent-primary); }
+
+        @media (max-width: 600px) {
+            .lesson h1 { font-size: 1.75rem; }
+            .hook { font-size: 1.1rem; padding: 1.25rem; }
+            .lesson-nav { flex-direction: column; gap: 1rem; }
+            .nav-btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-inner">
+                <a href="../" class="back-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Back to Course
+                </a>
+                <div class="progress">Lesson <span>12</span> of 12</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <article class="lesson">
+            <div class="lesson-badge">Module 4: Level Up</div>
+            <h1>The Mistakes Everyone Makes</h1>
+            <div class="lesson-meta">3 min read</div>
+
+            <div class="hook">
+                Here are the 7 most common prompting mistakes—and how to fix each one. Bookmark this as a quick reference.
+            </div>
+
+            <div class="mistake-card">
+                <div class="mistake-header">
+                    <div class="mistake-num">1</div>
+                    <div class="mistake-title">Being too vague</div>
+                </div>
+                <div class="mistake-bad">
+                    <div class="mistake-label">Instead of this</div>
+                    Help me write better
+                </div>
+                <div class="mistake-good">
+                    <div class="mistake-label">Do this</div>
+                    Review this email and suggest 3 ways to make it more persuasive
+                </div>
+            </div>
+
+            <div class="mistake-card">
+                <div class="mistake-header">
+                    <div class="mistake-num">2</div>
+                    <div class="mistake-title">Giving up after one try</div>
+                </div>
+                <div class="mistake-bad">
+                    <div class="mistake-label">Instead of this</div>
+                    "This response sucks" → close chat
+                </div>
+                <div class="mistake-good">
+                    <div class="mistake-label">Do this</div>
+                    "This is too formal. Make it more casual and cut the length in half."
+                </div>
+            </div>
+
+            <div class="mistake-card">
+                <div class="mistake-header">
+                    <div class="mistake-num">3</div>
+                    <div class="mistake-title">Treating AI like a search engine</div>
+                </div>
+                <div class="mistake-bad">
+                    <div class="mistake-label">Instead of this</div>
+                    python list sort reverse
+                </div>
+                <div class="mistake-good">
+                    <div class="mistake-label">Do this</div>
+                    I have a list of numbers and need to sort them from highest to lowest. Show me the simplest way.
+                </div>
+            </div>
+
+            <div class="mistake-card">
+                <div class="mistake-header">
+                    <div class="mistake-num">4</div>
+                    <div class="mistake-title">Not providing context</div>
+                </div>
+                <div class="mistake-bad">
+                    <div class="mistake-label">Instead of this</div>
+                    Write a job description
+                </div>
+                <div class="mistake-good">
+                    <div class="mistake-label">Do this</div>
+                    Write a job description for a junior marketing role at a B2B SaaS startup. We value creativity over experience. Tone should be friendly but professional.
+                </div>
+            </div>
+
+            <div class="mistake-card">
+                <div class="mistake-header">
+                    <div class="mistake-num">5</div>
+                    <div class="mistake-title">Asking for too much at once</div>
+                </div>
+                <div class="mistake-bad">
+                    <div class="mistake-label">Instead of this</div>
+                    Create a complete marketing strategy with budget, timeline, campaigns, copy for each channel, and measurement framework
+                </div>
+                <div class="mistake-good">
+                    <div class="mistake-label">Do this</div>
+                    Let's start with the strategy. What are 3 marketing channels that would work for a B2B SaaS startup with a $5k/month budget?
+                </div>
+            </div>
+
+            <div class="mistake-card">
+                <div class="mistake-header">
+                    <div class="mistake-num">6</div>
+                    <div class="mistake-title">Not specifying the format</div>
+                </div>
+                <div class="mistake-bad">
+                    <div class="mistake-label">Instead of this</div>
+                    Give me ideas for my presentation
+                </div>
+                <div class="mistake-good">
+                    <div class="mistake-label">Do this</div>
+                    Give me 5 ideas as bullet points. For each, one sentence on why it would work.
+                </div>
+            </div>
+
+            <div class="mistake-card">
+                <div class="mistake-header">
+                    <div class="mistake-num">7</div>
+                    <div class="mistake-title">Trusting everything without verification</div>
+                </div>
+                <div class="mistake-bad">
+                    <div class="mistake-label">Instead of this</div>
+                    What were Apple's Q3 2024 earnings? → Use answer directly
+                </div>
+                <div class="mistake-good">
+                    <div class="mistake-label">Do this</div>
+                    For important facts, statistics, or recent events: verify with a reliable source before using
+                </div>
+            </div>
+
+            <h2>The One-Minute Fix</h2>
+
+            <p>
+                Before sending any prompt, ask yourself:
+            </p>
+
+            <p>
+                <strong>1. Is this specific?</strong> Would two different AIs interpret it the same way?<br>
+                <strong>2. Did I give context?</strong> Does it know who I am and what I need?<br>
+                <strong>3. Did I say how I want it?</strong> Format, length, tone?
+            </p>
+
+            <div class="summary">
+                <div class="summary-label">Key Takeaway</div>
+                <div class="summary-text">Most prompt failures come from vagueness. Be specific, give context, specify format.</div>
+            </div>
+
+            <div class="completion">
+                <div class="completion-icon">🎓</div>
+                <div class="completion-title">Course Complete!</div>
+                <div class="completion-text">
+                    You've learned everything you need to use AI effectively. Now go practice—the best way to get better is to use these skills daily.
+                </div>
+                <a href="../" class="completion-cta">
+                    Back to Course Home
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+
+            <nav class="lesson-nav">
+                <a href="11-show-dont-tell.html" class="nav-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Previous
+                </a>
+                <a href="../" class="nav-btn next">
+                    Back to Course
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://webprompts.org/">WebPrompts</a>
+                <a href="https://webprompts.org/misc/">More Resources</a>
+                <a href="https://github.com/webprompts/learn">GitHub</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

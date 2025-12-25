@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 7: Writing & Editing — Learn AI</title>
+    <meta name="description" content="Never stare at a blank page again. Copy-paste prompts for emails, docs, and rewrites.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-card: #1c1c21;
+            --accent-primary: #a855f7;
+            --accent-secondary: #c084fc;
+            --accent-glow: rgba(168, 85, 247, 0.15);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-color: #27272a;
+            --success: #22c55e;
+            --success-glow: rgba(34, 197, 94, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.7; min-height: 100vh; }
+        .container { max-width: 680px; margin: 0 auto; padding: 0 1.5rem; }
+
+        header { padding: 1.5rem 0; border-bottom: 1px solid var(--border-color); }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; }
+        .back-link { display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+        .back-link:hover { color: var(--accent-primary); }
+        .progress { font-size: 0.85rem; color: var(--text-muted); }
+        .progress span { color: var(--accent-primary); font-weight: 600; }
+
+        .lesson { padding: 3rem 0; }
+        .lesson-badge { display: inline-block; padding: 0.3rem 0.75rem; background: var(--accent-glow); border-radius: 100px; font-size: 0.75rem; font-weight: 600; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
+        .lesson h1 { font-size: 2.25rem; font-weight: 800; line-height: 1.2; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .lesson-meta { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+        .hook { font-size: 1.2rem; color: var(--text-secondary); padding: 1.5rem; background: var(--bg-card); border-left: 3px solid var(--accent-primary); border-radius: 0 12px 12px 0; margin-bottom: 2rem; }
+        h2 { font-size: 1.35rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+        h3 { font-size: 1.1rem; font-weight: 600; margin: 1.5rem 0 0.75rem; color: var(--text-primary); }
+        p { margin-bottom: 1rem; color: var(--text-secondary); }
+        strong { color: var(--text-primary); font-weight: 600; }
+
+        .prompt-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; margin: 1.25rem 0; overflow: hidden; }
+        .prompt-header { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); }
+        .prompt-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+        .copy-btn { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; background: var(--accent-primary); border: none; border-radius: 6px; color: white; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+        .copy-btn:hover { background: var(--accent-secondary); }
+        .copy-btn.copied { background: var(--success); }
+        .prompt-content { padding: 1.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6; color: var(--text-primary); white-space: pre-wrap; }
+
+        .try-it { background: var(--success-glow); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 1.5rem; margin: 2rem 0; }
+        .try-it-header { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--success); margin-bottom: 0.75rem; }
+        .try-it p { color: var(--text-secondary); margin-bottom: 0; }
+
+        .summary { padding: 1.5rem; background: var(--bg-card); border-radius: 12px; margin: 2rem 0; text-align: center; }
+        .summary-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .summary-text { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); }
+
+        .lesson-nav { display: flex; justify-content: space-between; padding: 2rem 0; border-top: 1px solid var(--border-color); margin-top: 2rem; }
+        .nav-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-primary); text-decoration: none; font-weight: 500; transition: all 0.2s; }
+        .nav-btn:hover { border-color: var(--accent-primary); background: var(--accent-glow); }
+        .nav-btn.next { background: var(--accent-primary); border-color: var(--accent-primary); }
+        .nav-btn.next:hover { background: var(--accent-secondary); border-color: var(--accent-secondary); }
+
+        footer { padding: 2rem 0; border-top: 1px solid var(--border-color); text-align: center; }
+        .footer-links { display: flex; justify-content: center; gap: 2rem; font-size: 0.85rem; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; }
+        .footer-links a:hover { color: var(--accent-primary); }
+
+        @media (max-width: 600px) {
+            .lesson h1 { font-size: 1.75rem; }
+            .hook { font-size: 1.1rem; padding: 1.25rem; }
+            .lesson-nav { flex-direction: column; gap: 1rem; }
+            .nav-btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-inner">
+                <a href="../" class="back-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Back to Course
+                </a>
+                <div class="progress">Lesson <span>7</span> of 12</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <article class="lesson">
+            <div class="lesson-badge">Module 3: Real Uses</div>
+            <h1>Writing & Editing</h1>
+            <div class="lesson-meta">3 min read</div>
+
+            <div class="hook">
+                Never stare at a blank page again. Here are copy-paste prompts for the writing tasks you do every week.
+            </div>
+
+            <p>
+                Writing is the #1 use case for AI. Whether it's emails, documents, or social posts, these prompts will save you hours.
+            </p>
+
+            <h2>5 Copy-Paste Writing Prompts</h2>
+
+            <h3>1. The Email Drafter</h3>
+            <div class="prompt-box">
+                <div class="prompt-header">
+                    <span class="prompt-label">Email helper</span>
+                    <button class="copy-btn" onclick="copyPrompt(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="prompt-content">I need to write an email about: [situation]
+
+The recipient is: [relationship/role]
+
+My goal is to: [what you want to happen]
+
+Tone should be: [professional/casual/apologetic/etc.]
+
+Please write 2 versions—one shorter, one more detailed—so I can pick the right length.</div>
+            </div>
+
+            <h3>2. The Document Summarizer</h3>
+            <div class="prompt-box">
+                <div class="prompt-header">
+                    <span class="prompt-label">Summarize anything</span>
+                    <button class="copy-btn" onclick="copyPrompt(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="prompt-content">Summarize this document in 3 parts:
+
+1. **One-sentence summary** — the main point
+2. **Key takeaways** — 3-5 bullet points
+3. **Action items** — what should I do based on this?
+
+Here's the document:
+[paste text]</div>
+            </div>
+
+            <h3>3. The Rewriter</h3>
+            <div class="prompt-box">
+                <div class="prompt-header">
+                    <span class="prompt-label">Improve your writing</span>
+                    <button class="copy-btn" onclick="copyPrompt(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="prompt-content">Rewrite this to be [clearer / more concise / more engaging / more professional]:
+
+[paste your text]
+
+Keep my voice and key points, but make it better. Show me what you changed and why.</div>
+            </div>
+
+            <h3>4. The Blank Page Killer</h3>
+            <div class="prompt-box">
+                <div class="prompt-header">
+                    <span class="prompt-label">Get started writing</span>
+                    <button class="copy-btn" onclick="copyPrompt(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="prompt-content">I need to write a [type of document] about [topic].
+
+My audience is [who will read this].
+
+Here's what I know so far (rough notes/bullet points):
+[paste notes]
+
+Create an outline with key sections, then write a rough first draft I can edit. Mark any spots where you need more info from me.</div>
+            </div>
+
+            <h3>5. The Proofreader</h3>
+            <div class="prompt-box">
+                <div class="prompt-header">
+                    <span class="prompt-label">Final polish</span>
+                    <button class="copy-btn" onclick="copyPrompt(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="prompt-content">Proofread this text and check for:
+- Grammar and spelling errors
+- Awkward phrasing
+- Unclear sentences
+- Inconsistent tone
+
+List each issue with the fix. Then give me a clean final version.
+
+[paste text]</div>
+            </div>
+
+            <h2>Pro Tips</h2>
+
+            <p>
+                <strong>Always provide context.</strong> "Write an email" vs. "Write an email to my boss asking for Friday off—she's usually flexible but we're busy this week" gets completely different results.
+            </p>
+
+            <p>
+                <strong>Ask for options.</strong> Getting 2-3 versions lets you pick the best one or mix elements from each.
+            </p>
+
+            <p>
+                <strong>Iterate.</strong> "Make the opening punchier" or "add a specific example" refines generic drafts into great ones.
+            </p>
+
+            <div class="try-it">
+                <div class="try-it-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    Try It Now
+                </div>
+                <p>Pick the prompt that matches something you need to write this week. Fill it in and test it right now—you'll have a usable draft in 60 seconds.</p>
+            </div>
+
+            <div class="summary">
+                <div class="summary-label">Key Takeaway</div>
+                <div class="summary-text">AI handles the blank page problem. Give context, ask for options, then iterate.</div>
+            </div>
+
+            <nav class="lesson-nav">
+                <a href="06-iteration.html" class="nav-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Previous
+                </a>
+                <a href="08-research.html" class="nav-btn next">
+                    Next: Research & Learning
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://webprompts.org/">WebPrompts</a>
+                <a href="https://webprompts.org/misc/">More Resources</a>
+                <a href="https://github.com/webprompts/learn">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function copyPrompt(btn) {
+            const promptContent = btn.closest('.prompt-box').querySelector('.prompt-content').textContent;
+            navigator.clipboard.writeText(promptContent).then(() => {
+                btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

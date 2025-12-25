@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 11: Show, Don't Tell — Learn AI</title>
+    <meta name="description" content="Examples beat instructions. Give AI a pattern to follow and watch it match your style.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-card: #1c1c21;
+            --accent-primary: #a855f7;
+            --accent-secondary: #c084fc;
+            --accent-glow: rgba(168, 85, 247, 0.15);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-color: #27272a;
+            --success: #22c55e;
+            --success-glow: rgba(34, 197, 94, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.7; min-height: 100vh; }
+        .container { max-width: 680px; margin: 0 auto; padding: 0 1.5rem; }
+
+        header { padding: 1.5rem 0; border-bottom: 1px solid var(--border-color); }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; }
+        .back-link { display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+        .back-link:hover { color: var(--accent-primary); }
+        .progress { font-size: 0.85rem; color: var(--text-muted); }
+        .progress span { color: var(--accent-primary); font-weight: 600; }
+
+        .lesson { padding: 3rem 0; }
+        .lesson-badge { display: inline-block; padding: 0.3rem 0.75rem; background: var(--accent-glow); border-radius: 100px; font-size: 0.75rem; font-weight: 600; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
+        .lesson h1 { font-size: 2.25rem; font-weight: 800; line-height: 1.2; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .lesson-meta { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+        .hook { font-size: 1.2rem; color: var(--text-secondary); padding: 1.5rem; background: var(--bg-card); border-left: 3px solid var(--accent-primary); border-radius: 0 12px 12px 0; margin-bottom: 2rem; }
+        h2 { font-size: 1.35rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+        p { margin-bottom: 1rem; color: var(--text-secondary); }
+        strong { color: var(--text-primary); font-weight: 600; }
+
+        .prompt-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; margin: 1.25rem 0; overflow: hidden; }
+        .prompt-header { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); }
+        .prompt-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+        .copy-btn { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; background: var(--accent-primary); border: none; border-radius: 6px; color: white; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+        .copy-btn:hover { background: var(--accent-secondary); }
+        .copy-btn.copied { background: var(--success); }
+        .prompt-content { padding: 1.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6; color: var(--text-primary); white-space: pre-wrap; }
+
+        .principle-box {
+            background: linear-gradient(135deg, var(--accent-glow), rgba(59, 130, 246, 0.15));
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .principle-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-secondary);
+        }
+
+        .try-it { background: var(--success-glow); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 1.5rem; margin: 2rem 0; }
+        .try-it-header { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--success); margin-bottom: 0.75rem; }
+        .try-it p { color: var(--text-secondary); margin-bottom: 0; }
+
+        .summary { padding: 1.5rem; background: var(--bg-card); border-radius: 12px; margin: 2rem 0; text-align: center; }
+        .summary-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .summary-text { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); }
+
+        .lesson-nav { display: flex; justify-content: space-between; padding: 2rem 0; border-top: 1px solid var(--border-color); margin-top: 2rem; }
+        .nav-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-primary); text-decoration: none; font-weight: 500; transition: all 0.2s; }
+        .nav-btn:hover { border-color: var(--accent-primary); background: var(--accent-glow); }
+        .nav-btn.next { background: var(--accent-primary); border-color: var(--accent-primary); }
+        .nav-btn.next:hover { background: var(--accent-secondary); border-color: var(--accent-secondary); }
+
+        footer { padding: 2rem 0; border-top: 1px solid var(--border-color); text-align: center; }
+        .footer-links { display: flex; justify-content: center; gap: 2rem; font-size: 0.85rem; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; }
+        .footer-links a:hover { color: var(--accent-primary); }
+
+        @media (max-width: 600px) {
+            .lesson h1 { font-size: 1.75rem; }
+            .hook { font-size: 1.1rem; padding: 1.25rem; }
+            .lesson-nav { flex-direction: column; gap: 1rem; }
+            .nav-btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-inner">
+                <a href="../" class="back-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Back to Course
+                </a>
+                <div class="progress">Lesson <span>11</span> of 12</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <article class="lesson">
+            <div class="lesson-badge">Module 4: Level Up</div>
+            <h1>Show, Don't Tell</h1>
+            <div class="lesson-meta">2 min read</div>
+
+            <div class="hook">
+                Struggling to describe the style or format you want? Stop explaining—just show AI an example and ask it to follow the pattern.
+            </div>
+
+            <p>
+                Describing exactly what you want is hard. But <strong>showing an example</strong> is easy—and AI is excellent at pattern matching.
+            </p>
+
+            <div class="principle-box">
+                <div class="principle-text">One good example > paragraphs of instructions</div>
+            </div>
+
+            <h2>The Basic Pattern</h2>
+
+            <div class="prompt-box">
+                <div class="prompt-header">
+                    <span class="prompt-label">Few-shot template</span>
+                    <button class="copy-btn" onclick="copyPrompt(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="prompt-content">Here's an example of what I want:
+
+[Input]: [example input]
+[Output]: [example output in the style you want]
+
+Now do the same for:
+[Input]: [your actual input]</div>
+            </div>
+
+            <h2>Real Examples</h2>
+
+            <h3>Match a Writing Style</h3>
+            <div class="prompt-box">
+                <div class="prompt-header">
+                    <span class="prompt-label">Copy a voice</span>
+                    <button class="copy-btn" onclick="copyPrompt(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="prompt-content">I want you to write in my style. Here are 3 examples of how I write:
+
+Example 1: "The thing about productivity apps is they make you feel productive while you procrastinate on actual work."
+
+Example 2: "I deleted Twitter for the fifth time this year. It lasted 3 days. We both knew I'd be back."
+
+Example 3: "Everyone wants to 'build in public' until it's time to share the stuff that's actually embarrassing."
+
+Now write a short post about [topic] in this same voice.</div>
+            </div>
+
+            <h3>Create Consistent Formats</h3>
+            <div class="prompt-box">
+                <div class="prompt-header">
+                    <span class="prompt-label">Format matching</span>
+                    <button class="copy-btn" onclick="copyPrompt(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="prompt-content">I need product descriptions in this format:
+
+Example:
+Product: Wireless Earbuds
+Description: Tiny but mighty. 8 hours of battery, noise cancellation that actually works, and a case that fits in your coin pocket. For people who hate tangled wires and love good bass.
+
+Now write descriptions for these products:
+1. [Product A]
+2. [Product B]
+3. [Product C]</div>
+            </div>
+
+            <h3>Transform Data Consistently</h3>
+            <div class="prompt-box">
+                <div class="prompt-header">
+                    <span class="prompt-label">Data transformation</span>
+                    <button class="copy-btn" onclick="copyPrompt(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="prompt-content">Convert technical features to customer benefits like this:
+
+Feature: "10,000 mAh battery capacity"
+Benefit: "Powers your phone for 3 full days—even with heavy use"
+
+Feature: "256-bit AES encryption"
+Benefit: "Your data is locked with bank-level security"
+
+Now convert these features:
+[List your features]</div>
+            </div>
+
+            <h2>Pro Tips</h2>
+
+            <p>
+                <strong>More examples = better results.</strong> One example works, but 2-3 examples help AI understand patterns more reliably.
+            </p>
+
+            <p>
+                <strong>Show variety.</strong> If your examples are too similar, AI might match the wrong pattern. Show different cases when possible.
+            </p>
+
+            <p>
+                <strong>Label clearly.</strong> Use "Input:" / "Output:" or "Before:" / "After:" to make the pattern obvious.
+            </p>
+
+            <div class="try-it">
+                <div class="try-it-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    Try It Now
+                </div>
+                <p>Find something you've written before that represents your style (email, social post, doc). Paste 2-3 examples, then ask AI to write something new in that same voice.</p>
+            </div>
+
+            <div class="summary">
+                <div class="summary-label">Key Takeaway</div>
+                <div class="summary-text">Show AI what you want with examples. It's better at copying patterns than following descriptions.</div>
+            </div>
+
+            <nav class="lesson-nav">
+                <a href="10-chain-of-thought.html" class="nav-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Previous
+                </a>
+                <a href="12-mistakes.html" class="nav-btn next">
+                    Next: The Mistakes Everyone Makes
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://webprompts.org/">WebPrompts</a>
+                <a href="https://webprompts.org/misc/">More Resources</a>
+                <a href="https://github.com/webprompts/learn">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function copyPrompt(btn) {
+            const promptContent = btn.closest('.prompt-box').querySelector('.prompt-content').textContent;
+            navigator.clipboard.writeText(promptContent).then(() => {
+                btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

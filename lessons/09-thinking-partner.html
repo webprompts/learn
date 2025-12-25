@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 9: Thinking Partner — Learn AI</title>
+    <meta name="description" content="Use AI to think through decisions, brainstorm ideas, and analyze problems.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-card: #1c1c21;
+            --accent-primary: #a855f7;
+            --accent-secondary: #c084fc;
+            --accent-glow: rgba(168, 85, 247, 0.15);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-color: #27272a;
+            --success: #22c55e;
+            --success-glow: rgba(34, 197, 94, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.7; min-height: 100vh; }
+        .container { max-width: 680px; margin: 0 auto; padding: 0 1.5rem; }
+
+        header { padding: 1.5rem 0; border-bottom: 1px solid var(--border-color); }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; }
+        .back-link { display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+        .back-link:hover { color: var(--accent-primary); }
+        .progress { font-size: 0.85rem; color: var(--text-muted); }
+        .progress span { color: var(--accent-primary); font-weight: 600; }
+
+        .lesson { padding: 3rem 0; }
+        .lesson-badge { display: inline-block; padding: 0.3rem 0.75rem; background: var(--accent-glow); border-radius: 100px; font-size: 0.75rem; font-weight: 600; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
+        .lesson h1 { font-size: 2.25rem; font-weight: 800; line-height: 1.2; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .lesson-meta { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+        .hook { font-size: 1.2rem; color: var(--text-secondary); padding: 1.5rem; background: var(--bg-card); border-left: 3px solid var(--accent-primary); border-radius: 0 12px 12px 0; margin-bottom: 2rem; }
+        h2 { font-size: 1.35rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+        h3 { font-size: 1.1rem; font-weight: 600; margin: 1.5rem 0 0.75rem; color: var(--text-primary); }
+        p { margin-bottom: 1rem; color: var(--text-secondary); }
+        strong { color: var(--text-primary); font-weight: 600; }
+
+        .prompt-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; margin: 1.25rem 0; overflow: hidden; }
+        .prompt-header { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); }
+        .prompt-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+        .copy-btn { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; background: var(--accent-primary); border: none; border-radius: 6px; color: white; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+        .copy-btn:hover { background: var(--accent-secondary); }
+        .copy-btn.copied { background: var(--success); }
+        .prompt-content { padding: 1.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6; color: var(--text-primary); white-space: pre-wrap; }
+
+        .try-it { background: var(--success-glow); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 1.5rem; margin: 2rem 0; }
+        .try-it-header { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--success); margin-bottom: 0.75rem; }
+        .try-it p { color: var(--text-secondary); margin-bottom: 0; }
+
+        .summary { padding: 1.5rem; background: var(--bg-card); border-radius: 12px; margin: 2rem 0; text-align: center; }
+        .summary-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .summary-text { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); }
+
+        .milestone {
+            background: linear-gradient(135deg, var(--accent-glow), rgba(59, 130, 246, 0.15));
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .milestone-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .milestone-title { font-size: 1.1rem; font-weight: 700; color: var(--accent-secondary); margin-bottom: 0.25rem; }
+        .milestone-text { color: var(--text-secondary); font-size: 0.95rem; }
+
+        .lesson-nav { display: flex; justify-content: space-between; padding: 2rem 0; border-top: 1px solid var(--border-color); margin-top: 2rem; }
+        .nav-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-primary); text-decoration: none; font-weight: 500; transition: all 0.2s; }
+        .nav-btn:hover { border-color: var(--accent-primary); background: var(--accent-glow); }
+        .nav-btn.next { background: var(--accent-primary); border-color: var(--accent-primary); }
+        .nav-btn.next:hover { background: var(--accent-secondary); border-color: var(--accent-secondary); }
+
+        footer { padding: 2rem 0; border-top: 1px solid var(--border-color); text-align: center; }
+        .footer-links { display: flex; justify-content: center; gap: 2rem; font-size: 0.85rem; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; }
+        .footer-links a:hover { color: var(--accent-primary); }
+
+        @media (max-width: 600px) {
+            .lesson h1 { font-size: 1.75rem; }
+            .hook { font-size: 1.1rem; padding: 1.25rem; }
+            .lesson-nav { flex-direction: column; gap: 1rem; }
+            .nav-btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-inner">
+                <a href="../" class="back-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Back to Course
+                </a>
+                <div class="progress">Lesson <span>9</span> of 12</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <article class="lesson">
+            <div class="lesson-badge">Module 3: Real Uses</div>
+            <h1>Thinking Partner</h1>
+            <div class="lesson-meta">2 min read</div>
+
+            <div class="hook">
+                Sometimes you don't need answers—you need someone to help you think. AI is available 24/7 to help you work through decisions, brainstorm ideas, and see blind spots.
+            </div>
+
+            <p>
+                This is one of the most underrated uses of AI. Instead of asking for solutions, use it to <strong>think out loud</strong> and explore your options.
+            </p>
+
+            <h2>Decision Helper</h2>
+
+            <h3>The Pros/Cons Analyzer</h3>
+            <div class="prompt-box">
+                <div class="prompt-header">
+                    <span class="prompt-label">Weigh your options</span>
+                    <button class="copy-btn" onclick="copyPrompt(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="prompt-content">I'm trying to decide between: [Option A] and [Option B]
+
+Here's my situation:
+[Context about your goals, constraints, values]
+
+Help me think through this by:
+1. Listing the real pros and cons of each (not generic ones)
+2. Identifying what I might be overlooking
+3. Suggesting questions I should ask myself
+4. Playing devil's advocate on my leaning (if I share one)</div>
+            </div>
+
+            <h3>The Assumption Checker</h3>
+            <div class="prompt-box">
+                <div class="prompt-header">
+                    <span class="prompt-label">Find blind spots</span>
+                    <button class="copy-btn" onclick="copyPrompt(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="prompt-content">I'm planning to [action/decision].
+
+My reasoning is:
+[Explain your thinking]
+
+I want you to poke holes in this. What assumptions am I making? What could go wrong that I'm not seeing? What would someone who disagrees say?
+
+Be direct—I need honest feedback, not validation.</div>
+            </div>
+
+            <h2>Brainstorming Partner</h2>
+
+            <h3>The Idea Generator</h3>
+            <div class="prompt-box">
+                <div class="prompt-header">
+                    <span class="prompt-label">Break creative blocks</span>
+                    <button class="copy-btn" onclick="copyPrompt(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="prompt-content">I need ideas for [challenge/project].
+
+Context:
+- Goal: [what I'm trying to achieve]
+- Constraints: [budget, time, resources, etc.]
+- Already tried: [what hasn't worked]
+
+Give me 10 ideas ranging from obvious to unconventional. For each, one sentence on why it might work. Don't filter yourself—some wild ideas are fine.</div>
+            </div>
+
+            <h3>The Rubber Duck</h3>
+            <p>
+                Programmers have a technique called "rubber duck debugging"—explaining your problem out loud to a rubber duck. AI is a much better duck.
+            </p>
+            <div class="prompt-box">
+                <div class="prompt-header">
+                    <span class="prompt-label">Think out loud</span>
+                    <button class="copy-btn" onclick="copyPrompt(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="prompt-content">I'm stuck on something and need to think out loud. Just listen and help me organize my thoughts. Ask clarifying questions when I'm unclear.
+
+Here's what I'm dealing with:
+[Brain dump your thoughts, messy is fine]
+
+Don't try to solve it yet—first help me understand what the actual problem is.</div>
+            </div>
+
+            <h2>The Key Principle</h2>
+
+            <p>
+                <strong>You make the decision. AI helps you think better.</strong>
+            </p>
+
+            <p>
+                Don't outsource your judgment. Use AI to explore options, find blind spots, and organize your thinking—then trust yourself to choose.
+            </p>
+
+            <div class="try-it">
+                <div class="try-it-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    Try It Now
+                </div>
+                <p>Think of a decision you're currently wrestling with. Use the Pros/Cons Analyzer or Assumption Checker to get a new perspective. Notice what you hadn't considered.</p>
+            </div>
+
+            <div class="summary">
+                <div class="summary-label">Key Takeaway</div>
+                <div class="summary-text">AI is your 24/7 thinking partner. Use it to explore, not to decide.</div>
+            </div>
+
+            <div class="milestone">
+                <div class="milestone-icon">🎯</div>
+                <div class="milestone-title">Module 3 Complete!</div>
+                <div class="milestone-text">You now know the main use cases. The final module teaches advanced techniques.</div>
+            </div>
+
+            <nav class="lesson-nav">
+                <a href="08-research.html" class="nav-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Previous
+                </a>
+                <a href="10-chain-of-thought.html" class="nav-btn next">
+                    Next: Make AI Think Step by Step
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://webprompts.org/">WebPrompts</a>
+                <a href="https://webprompts.org/misc/">More Resources</a>
+                <a href="https://github.com/webprompts/learn">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function copyPrompt(btn) {
+            const promptContent = btn.closest('.prompt-box').querySelector('.prompt-content').textContent;
+            navigator.clipboard.writeText(promptContent).then(() => {
+                btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 3: Talk Like a Human — Learn AI</title>
+    <meta name="description" content="AI isn't Google. Stop searching and start having a conversation.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-card: #1c1c21;
+            --accent-primary: #a855f7;
+            --accent-secondary: #c084fc;
+            --accent-glow: rgba(168, 85, 247, 0.15);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-color: #27272a;
+            --success: #22c55e;
+            --success-glow: rgba(34, 197, 94, 0.15);
+            --error: #ef4444;
+            --error-glow: rgba(239, 68, 68, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 680px; margin: 0 auto; padding: 0 1.5rem; }
+
+        header { padding: 1.5rem 0; border-bottom: 1px solid var(--border-color); }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; }
+        .back-link { display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+        .back-link:hover { color: var(--accent-primary); }
+        .progress { font-size: 0.85rem; color: var(--text-muted); }
+        .progress span { color: var(--accent-primary); font-weight: 600; }
+
+        .lesson { padding: 3rem 0; }
+        .lesson-badge { display: inline-block; padding: 0.3rem 0.75rem; background: var(--accent-glow); border-radius: 100px; font-size: 0.75rem; font-weight: 600; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
+        .lesson h1 { font-size: 2.25rem; font-weight: 800; line-height: 1.2; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .lesson-meta { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+        .hook { font-size: 1.2rem; color: var(--text-secondary); padding: 1.5rem; background: var(--bg-card); border-left: 3px solid var(--accent-primary); border-radius: 0 12px 12px 0; margin-bottom: 2rem; }
+        h2 { font-size: 1.35rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+        p { margin-bottom: 1rem; color: var(--text-secondary); }
+        strong { color: var(--text-primary); font-weight: 600; }
+
+        .comparison { display: grid; gap: 1rem; margin: 1.5rem 0; }
+        .compare-box { padding: 1.25rem; border-radius: 12px; border: 1px solid; }
+        .compare-box.bad { background: var(--error-glow); border-color: rgba(239, 68, 68, 0.3); }
+        .compare-box.good { background: var(--success-glow); border-color: rgba(34, 197, 94, 0.3); }
+        .compare-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+        .compare-box.bad .compare-label { color: var(--error); }
+        .compare-box.good .compare-label { color: var(--success); }
+        .compare-text { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; line-height: 1.5; color: var(--text-primary); }
+
+        .prompt-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; margin: 1.5rem 0; overflow: hidden; }
+        .prompt-header { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); }
+        .prompt-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+        .copy-btn { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; background: var(--accent-primary); border: none; border-radius: 6px; color: white; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+        .copy-btn:hover { background: var(--accent-secondary); }
+        .copy-btn.copied { background: var(--success); }
+        .prompt-content { padding: 1.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; line-height: 1.6; color: var(--text-primary); white-space: pre-wrap; }
+
+        .try-it { background: var(--success-glow); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 1.5rem; margin: 2rem 0; }
+        .try-it-header { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--success); margin-bottom: 0.75rem; }
+        .try-it p { color: var(--text-secondary); margin-bottom: 0; }
+
+        .summary { padding: 1.5rem; background: var(--bg-card); border-radius: 12px; margin: 2rem 0; text-align: center; }
+        .summary-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .summary-text { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); }
+
+        /* Milestone box */
+        .milestone {
+            background: linear-gradient(135deg, var(--accent-glow), rgba(59, 130, 246, 0.15));
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .milestone-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .milestone-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .milestone-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .lesson-nav { display: flex; justify-content: space-between; padding: 2rem 0; border-top: 1px solid var(--border-color); margin-top: 2rem; }
+        .nav-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-primary); text-decoration: none; font-weight: 500; transition: all 0.2s; }
+        .nav-btn:hover { border-color: var(--accent-primary); background: var(--accent-glow); }
+        .nav-btn.next { background: var(--accent-primary); border-color: var(--accent-primary); }
+        .nav-btn.next:hover { background: var(--accent-secondary); border-color: var(--accent-secondary); }
+
+        footer { padding: 2rem 0; border-top: 1px solid var(--border-color); text-align: center; }
+        .footer-links { display: flex; justify-content: center; gap: 2rem; font-size: 0.85rem; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; }
+        .footer-links a:hover { color: var(--accent-primary); }
+
+        @media (max-width: 600px) {
+            .lesson h1 { font-size: 1.75rem; }
+            .hook { font-size: 1.1rem; padding: 1.25rem; }
+            .lesson-nav { flex-direction: column; gap: 1rem; }
+            .nav-btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-inner">
+                <a href="../" class="back-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Back to Course
+                </a>
+                <div class="progress">Lesson <span>3</span> of 12</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <article class="lesson">
+            <div class="lesson-badge">Module 1: First Steps</div>
+            <h1>Talk Like a Human</h1>
+            <div class="lesson-meta">2 min read</div>
+
+            <div class="hook">
+                AI isn't a search engine. Stop typing keywords and start having a conversation.
+            </div>
+
+            <p>
+                When Google came out, we learned to type in weird ways: "best pizza NYC delivery late night." We stripped out all the normal words because search engines didn't understand them.
+            </p>
+
+            <p>
+                <strong>AI is the opposite.</strong> It's trained on human conversation. The more naturally you write, the better it understands you.
+            </p>
+
+            <h2>Search vs. Conversation</h2>
+
+            <div class="comparison">
+                <div class="compare-box bad">
+                    <div class="compare-label">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                        Search engine style
+                    </div>
+                    <div class="compare-text">python sort list descending</div>
+                </div>
+                <div class="compare-box good">
+                    <div class="compare-label">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        Conversation style
+                    </div>
+                    <div class="compare-text">I have a list of numbers in Python and I need to sort them from highest to lowest. What's the simplest way to do this?</div>
+                </div>
+            </div>
+
+            <p>
+                The second version gives AI context (it's a list of numbers), your preference (simplest way), and implies you want an explanation, not just code.
+            </p>
+
+            <h2>You Can Say "Please" and "Thanks"</h2>
+
+            <p>
+                Sounds silly, but being conversational and polite actually works better. Research shows that prompts with collaborative language get better responses.
+            </p>
+
+            <p>
+                You're not commanding a machine. You're working with a very smart assistant who performs best when you communicate clearly and naturally.
+            </p>
+
+            <div class="comparison">
+                <div class="compare-box bad">
+                    <div class="compare-label">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                        Command style
+                    </div>
+                    <div class="compare-text">List 10 marketing ideas.</div>
+                </div>
+                <div class="compare-box good">
+                    <div class="compare-label">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        Collaborative style
+                    </div>
+                    <div class="compare-text">I'm launching a new fitness app for busy professionals. Could you help me brainstorm some marketing angles? I'm especially interested in ideas that don't require a big budget.</div>
+                </div>
+            </div>
+
+            <h2>The Key Shift</h2>
+
+            <p>
+                Think of AI as a smart colleague, not a vending machine. You wouldn't walk up to a coworker and bark "marketing ideas." You'd explain your situation and ask for help.
+            </p>
+
+            <p>
+                <strong>Same energy applies here.</strong>
+            </p>
+
+            <div class="try-it">
+                <div class="try-it-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    Try It Now
+                </div>
+                <p>Think of something you'd normally Google. Now rewrite it as if you were asking a knowledgeable friend:</p>
+                <p style="margin-top: 0.75rem;">
+                    • Add context about your situation<br>
+                    • Explain what you're actually trying to do<br>
+                    • Ask in plain, natural language
+                </p>
+            </div>
+
+            <div class="summary">
+                <div class="summary-label">Key Takeaway</div>
+                <div class="summary-text">Write to AI like you're talking to a smart colleague, not searching Google.</div>
+            </div>
+
+            <div class="milestone">
+                <div class="milestone-icon">🎯</div>
+                <div class="milestone-title">Module 1 Complete!</div>
+                <div class="milestone-text">You've learned the fundamentals. Next up: a proven formula that works every time.</div>
+            </div>
+
+            <nav class="lesson-nav">
+                <a href="02-one-mistake.html" class="nav-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Previous
+                </a>
+                <a href="04-prompt-formula.html" class="nav-btn next">
+                    Next: The 4-Part Prompt
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://webprompts.org/">WebPrompts</a>
+                <a href="https://webprompts.org/misc/">More Resources</a>
+                <a href="https://github.com/webprompts/learn">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function copyPrompt(btn) {
+            const promptContent = btn.closest('.prompt-box').querySelector('.prompt-content').textContent;
+            navigator.clipboard.writeText(promptContent).then(() => {
+                btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

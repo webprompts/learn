@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 6: The Iteration Loop — Learn AI</title>
+    <meta name="description" content="The first response is rarely perfect. Learn the simple loop that gets you exactly what you need.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-card: #1c1c21;
+            --accent-primary: #a855f7;
+            --accent-secondary: #c084fc;
+            --accent-glow: rgba(168, 85, 247, 0.15);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-color: #27272a;
+            --success: #22c55e;
+            --success-glow: rgba(34, 197, 94, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.7; min-height: 100vh; }
+        .container { max-width: 680px; margin: 0 auto; padding: 0 1.5rem; }
+
+        header { padding: 1.5rem 0; border-bottom: 1px solid var(--border-color); }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; }
+        .back-link { display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+        .back-link:hover { color: var(--accent-primary); }
+        .progress { font-size: 0.85rem; color: var(--text-muted); }
+        .progress span { color: var(--accent-primary); font-weight: 600; }
+
+        .lesson { padding: 3rem 0; }
+        .lesson-badge { display: inline-block; padding: 0.3rem 0.75rem; background: var(--accent-glow); border-radius: 100px; font-size: 0.75rem; font-weight: 600; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
+        .lesson h1 { font-size: 2.25rem; font-weight: 800; line-height: 1.2; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .lesson-meta { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+        .hook { font-size: 1.2rem; color: var(--text-secondary); padding: 1.5rem; background: var(--bg-card); border-left: 3px solid var(--accent-primary); border-radius: 0 12px 12px 0; margin-bottom: 2rem; }
+        h2 { font-size: 1.35rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+        p { margin-bottom: 1rem; color: var(--text-secondary); }
+        strong { color: var(--text-primary); font-weight: 600; }
+
+        /* Loop visualization */
+        .loop-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 2rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .loop-step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .loop-box {
+            padding: 0.75rem 1.25rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .loop-arrow {
+            color: var(--accent-primary);
+        }
+
+        .loop-box.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        /* Conversation example */
+        .conversation {
+            margin: 1.5rem 0;
+        }
+
+        .message {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+        }
+
+        .message.user {
+            background: var(--accent-glow);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            margin-left: 2rem;
+        }
+
+        .message.ai {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            margin-right: 2rem;
+        }
+
+        .message-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .message.user .message-label { color: var(--accent-primary); }
+        .message.ai .message-label { color: var(--text-muted); }
+
+        .message-text {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        /* Feedback phrases */
+        .phrases-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .phrase {
+            padding: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+
+        .prompt-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; margin: 1.5rem 0; overflow: hidden; }
+        .prompt-header { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); }
+        .prompt-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+        .copy-btn { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; background: var(--accent-primary); border: none; border-radius: 6px; color: white; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+        .copy-btn:hover { background: var(--accent-secondary); }
+        .copy-btn.copied { background: var(--success); }
+        .prompt-content { padding: 1.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; line-height: 1.6; color: var(--text-primary); white-space: pre-wrap; }
+
+        .try-it { background: var(--success-glow); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 1.5rem; margin: 2rem 0; }
+        .try-it-header { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--success); margin-bottom: 0.75rem; }
+        .try-it p { color: var(--text-secondary); margin-bottom: 0; }
+
+        .summary { padding: 1.5rem; background: var(--bg-card); border-radius: 12px; margin: 2rem 0; text-align: center; }
+        .summary-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .summary-text { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); }
+
+        .milestone {
+            background: linear-gradient(135deg, var(--accent-glow), rgba(59, 130, 246, 0.15));
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .milestone-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .milestone-title { font-size: 1.1rem; font-weight: 700; color: var(--accent-secondary); margin-bottom: 0.25rem; }
+        .milestone-text { color: var(--text-secondary); font-size: 0.95rem; }
+
+        .lesson-nav { display: flex; justify-content: space-between; padding: 2rem 0; border-top: 1px solid var(--border-color); margin-top: 2rem; }
+        .nav-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-primary); text-decoration: none; font-weight: 500; transition: all 0.2s; }
+        .nav-btn:hover { border-color: var(--accent-primary); background: var(--accent-glow); }
+        .nav-btn.next { background: var(--accent-primary); border-color: var(--accent-primary); }
+        .nav-btn.next:hover { background: var(--accent-secondary); border-color: var(--accent-secondary); }
+
+        footer { padding: 2rem 0; border-top: 1px solid var(--border-color); text-align: center; }
+        .footer-links { display: flex; justify-content: center; gap: 2rem; font-size: 0.85rem; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; }
+        .footer-links a:hover { color: var(--accent-primary); }
+
+        @media (max-width: 600px) {
+            .lesson h1 { font-size: 1.75rem; }
+            .hook { font-size: 1.1rem; padding: 1.25rem; }
+            .phrases-grid { grid-template-columns: 1fr; }
+            .message.user { margin-left: 1rem; }
+            .message.ai { margin-right: 1rem; }
+            .lesson-nav { flex-direction: column; gap: 1rem; }
+            .nav-btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-inner">
+                <a href="../" class="back-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Back to Course
+                </a>
+                <div class="progress">Lesson <span>6</span> of 12</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <article class="lesson">
+            <div class="lesson-badge">Module 2: The Formula</div>
+            <h1>The Iteration Loop</h1>
+            <div class="lesson-meta">2 min read</div>
+
+            <div class="hook">
+                The secret pros know: your first prompt is just the start. The magic happens in the back-and-forth.
+            </div>
+
+            <p>
+                Most people give up after one response. If it's not perfect, they think "AI sucks" and move on. But <strong>the first response is almost never the final answer</strong>—it's a starting point.
+            </p>
+
+            <h2>The Simple Loop</h2>
+
+            <div class="loop-visual">
+                <div class="loop-box">Prompt</div>
+                <svg class="loop-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+                <div class="loop-box">Response</div>
+                <svg class="loop-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+                <div class="loop-box active">Feedback</div>
+                <svg class="loop-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+                <div class="loop-box">Refine</div>
+            </div>
+
+            <p>
+                Think of it like working with a human collaborator. You wouldn't expect perfect work on the first draft. You'd give feedback and iterate together.
+            </p>
+
+            <h2>What Good Feedback Looks Like</h2>
+
+            <div class="conversation">
+                <div class="message user">
+                    <div class="message-label">You (first prompt)</div>
+                    <div class="message-text">Write a LinkedIn post about our new product launch.</div>
+                </div>
+                <div class="message ai">
+                    <div class="message-label">AI</div>
+                    <div class="message-text">[Writes a generic, corporate-sounding post]</div>
+                </div>
+                <div class="message user">
+                    <div class="message-label">You (feedback)</div>
+                    <div class="message-text">This is too formal. Make it sound more like a real person—maybe start with a story or personal observation. And cut it in half.</div>
+                </div>
+                <div class="message ai">
+                    <div class="message-label">AI</div>
+                    <div class="message-text">[Writes a much more engaging, human post]</div>
+                </div>
+                <div class="message user">
+                    <div class="message-label">You (final tweak)</div>
+                    <div class="message-text">Love it. Just make the ending more of a question to drive engagement.</div>
+                </div>
+            </div>
+
+            <p>
+                Three turns got you from "generic corporate fluff" to "exactly what I wanted." That's how pros use AI.
+            </p>
+
+            <h2>Useful Feedback Phrases</h2>
+
+            <p>
+                Keep these in your back pocket when iterating:
+            </p>
+
+            <div class="phrases-grid">
+                <div class="phrase">"More casual / formal"</div>
+                <div class="phrase">"Cut this in half"</div>
+                <div class="phrase">"Add an example for..."</div>
+                <div class="phrase">"Remove the part about..."</div>
+                <div class="phrase">"Make it sound like..."</div>
+                <div class="phrase">"Focus more on..."</div>
+                <div class="phrase">"What if we tried..."</div>
+                <div class="phrase">"Keep X but change Y"</div>
+            </div>
+
+            <h2>When to Start Over vs. Iterate</h2>
+
+            <p>
+                <strong>Iterate</strong> when: The direction is right but the details are off. The AI understood you but needs refinement.
+            </p>
+
+            <p>
+                <strong>Start fresh</strong> when: The AI completely missed the point. It would take more effort to fix than to explain again from scratch.
+            </p>
+
+            <div class="try-it">
+                <div class="try-it-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    Try It Now
+                </div>
+                <p>Take any AI response you've gotten recently and practice giving feedback:</p>
+                <p style="margin-top: 0.75rem;">
+                    1. Identify what's working and what isn't<br>
+                    2. Give specific direction: "Make X more like Y"<br>
+                    3. Iterate 2-3 times until it's right
+                </p>
+            </div>
+
+            <div class="summary">
+                <div class="summary-label">Key Takeaway</div>
+                <div class="summary-text">Don't expect perfection on turn one. Iterate with specific feedback to get exactly what you need.</div>
+            </div>
+
+            <div class="milestone">
+                <div class="milestone-icon">🎯</div>
+                <div class="milestone-title">Module 2 Complete!</div>
+                <div class="milestone-text">You now have a complete system: formula + tone + iteration. Next: practical applications.</div>
+            </div>
+
+            <nav class="lesson-nav">
+                <a href="05-tone-secret.html" class="nav-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Previous
+                </a>
+                <a href="07-writing.html" class="nav-btn next">
+                    Next: Writing & Editing
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://webprompts.org/">WebPrompts</a>
+                <a href="https://webprompts.org/misc/">More Resources</a>
+                <a href="https://github.com/webprompts/learn">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function copyPrompt(btn) {
+            const promptContent = btn.closest('.prompt-box').querySelector('.prompt-content').textContent;
+            navigator.clipboard.writeText(promptContent).then(() => {
+                btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
